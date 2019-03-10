@@ -3,7 +3,7 @@ import numpy as np
 import tensorflow as tf
 import tempfile
 from PIL import Image
-
+import matplotlib.pyplot as plt
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for, send_from_directory, jsonify
 )
@@ -30,6 +30,13 @@ def load_graph(frozen_graph_filename):
    with tf.Graph().as_default() as graph:
        tf.import_graph_def(graph_def, name="prefix")
    return graph
+
+def _plot_image(target_path, img):
+    f, ax = plt.subplot(figsize=(12,8))
+    ax.imshow(img.squeeze(), aspect='auto')
+    plt.tight_layout()
+    plt.savefig(target_path)
+    return 
 
 graph = load_graph(MODEL_PATH)
 x = graph.get_tensor_by_name('prefix/input_:0')
@@ -68,7 +75,7 @@ def query_image():
             file.save(filename)
 
             #try:
-            im = np.load(filename)
+            im = np.load(filename).astype(np.float32)
             im *= (1.0/im.max())
 
             # check image size
@@ -85,9 +92,13 @@ def query_image():
             idx = np.argmax(sim)
             flash(str(idx))
             
-            out_im = Image.fromarray(np.ones((100,100), dtype=np.uint8) * idx * 2)
+            im_ = np.ones_like(im)
             wat_path = 'i' + next(tempfile._get_candidate_names()) + '.png'
-            out_im.save(os.path.join(TMP_FOLDER, wat_path))
+            _plot_image(wat_path, np.vstack([im, im_]))
+            
+
+            #out_im = Image.fromarray(np.ones((100,100), dtype=np.uint8) * idx * 2)
+            #out_im.save(os.path.join(TMP_FOLDER, wat_path))
             
             obj = {
                 'idx': int(idx),
