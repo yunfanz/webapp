@@ -15,12 +15,14 @@ STATIC_FOLDER = os.path.join('flaskr', 'static')
 ALLOWED_EXTENSIONS = set(['npy', 'npz'])
 
 KEYS_PATH = os.path.join(DATA_FOLDER, 'keys.npy')
+META_PATH = os.path.join(DATA_FOLDER, 'meta.npy')
 MODEL_PATH = os.path.join(DATA_FOLDER, 'frozen_model.pb')
 
 bp = Blueprint('core', __name__, url_prefix='/')
 
 # load data
 keys = np.load(KEYS_PATH)
+meta = np.load(META_PATH)
 
 def load_graph(frozen_graph_filename):
    """ Function to load frozen TensorFlow graph"""
@@ -37,6 +39,23 @@ def _plot_image(target_path, img):
     plt.tight_layout()
     plt.savefig(target_path)
     return 
+
+def _retrieve_image(meta, data_dir="/database1/"):
+    basename = meta[0].split('.')[0]
+    idx = meta[1]
+    fields = basename.split('_')
+    prefix = '_'.join(fields[:3])
+    time_stamp = '_'.join(fields[3:5])
+    obstarget = fields[5]
+    coarse_chan = fields[6]
+    path = data_dir+'/'.join([prefix, obstarget, time_stamp, coarse_chan, idx])+'.npy'
+    try:
+        img_ = np.load(path).squeeze()
+    except:
+        print("Image path not exist", path)
+        img_ = None
+    return img_
+
 
 graph = load_graph(MODEL_PATH)
 x = graph.get_tensor_by_name('prefix/input_:0')
@@ -85,16 +104,18 @@ def query_image():
             im = im.reshape((1, 16, 128, 1))
 
             # run tensorflow inference
-            _, vec = sess.run([x, y], feed_dict={x: im})
+            vec = sess.run(y, feed_dict={x: im})
             
             # compare with keys
             sim = keys @ vec.reshape((32,))
             idx = np.argmax(sim)
             flash(str(idx))
             
-            im_ = np.ones_like(im)
+            im_ = _retrieve_image(meta[idx])
+            if im_ is None:
+                im_ = np.ones_like(im)
             wat_path = 'i' + next(tempfile._get_candidate_names()) + '.png'
-            _plot_image(wat_path, np.vstack([im, im_]))
+            _plot_image(wat_path, np.vstack([im.squeeze(), im_.squeeze()]))
             
 
             #out_im = Image.fromarray(np.ones((100,100), dtype=np.uint8) * idx * 2)
