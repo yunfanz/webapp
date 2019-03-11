@@ -25,9 +25,11 @@
                      $('#disp-timestamp').text(data['timestamp']);
                      $('#disp-target').text(data['target']);
                      $('#disp-scannum').text(data['scannum']);
+                     $('#disp-band').text(data['band']);
                      $('#disp-coarsechnl').text(data['coarsechnl']);
                      $('#disp-prefix').text(data['prefix']);
                      $('#disp-id').text(data['idx']);
+                     $('#disp-centerfreq').text(data['centerfreq']);
                      $('#disp-img').html("<img src='" + data['wat_path'] + "' alt='waterfall'/>");
                      $('#input-error').text("");
                      $('#results').show();

@@ -1,11 +1,15 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}{% endblock %}</h1>
+  <h1>{% block title %}Breakthrough Listen Data Query{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
     <form id="image-query-form" action="{{ url_for('core.query_image') }}" method="post" enctype="multipart/form-data"> 
+        <p>Have an interesting radio signal? Our deep learning engine searches the Breakthrough Listen Database for similar signal to yours.</p>
+        <p>Please upload a 16 times stamp by 128 frequency file in npy format. </p>
+
+
         <div class="form-group">
             <label for="file">16x128 image file (.npy):</label>
             <input type="file" class="form-control-file" id="file">
@@ -17,14 +21,18 @@
             <span id="input-error">
 	</div>
     </form>
+
+    <p>We found the following match: </p>
     <table class="table" id="results">
+        <tr><td>ID</td><td><span id="disp-id"></span></td> </tr>
         <tr><td>Distance</td><td><span id="disp-dist"></span></td> </tr>
         <tr><td>Timestamp</td><td><span id="disp-timestamp"></span></td> </tr>
         <tr><td>Target</td><td><span id="disp-target"></span></td> </tr>
         <tr><td>Scan Number</td><td><span id="disp-scannum"></span></td> </tr>
+        <tr><td>Band</td><td><span id="disp-band"></span></td> </tr>
         <tr><td>Coarse Channel</td><td><span id="disp-coarsechnl"></span></td> </tr>
+        <tr><td>Center Freq</td><td><span id="disp-centerfreq"></span></td> </tr>
         <tr><td>Prefix</td><td><span id="disp-prefix"></span></td> </tr>
-        <tr><td>ID</td><td><span id="disp-id"></span></td> </tr>
         <tr><td>Image</td><td><span id="disp-img"></span></td></tr>
         </tbody>
     </table>

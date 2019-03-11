@@ -35,10 +35,13 @@ def _load_graph(frozen_graph_filename):
        tf.import_graph_def(graph_def, name="prefix")
    return graph
 
-def _plot_image(target_path, img):
-    f, ax = plt.subplots(figsize=(8,6))
-    im = ax.imshow(img.squeeze(), aspect='auto')
-    f.colorbar(im)
+def _plot_image(target_path, img, img_):
+    f, ax = plt.subplots(2, 1, figsize=(8,5))
+    ax[0].imshow(img.squeeze(), aspect='auto')
+    ax[0].set_title("Your Input")
+    ax[1].imshow(img_.squeeze(), aspect='auto')
+    ax[1].set_title("Best Match")
+    ax[1].set_ylabel("Time")
     plt.tight_layout()
     plt.savefig(target_path)
     return 
@@ -121,21 +124,27 @@ def query_image():
             wat_path = 'i' + next(tempfile._get_candidate_names()) + '.png'
             im_ *= (1.0/im_.max())
 
-            _plot_image(os.path.join(SYS_TMP_FOLDER, wat_path), np.vstack([im.squeeze(), im_.squeeze()]))
+            _plot_image(os.path.join(SYS_TMP_FOLDER, wat_path), im.squeeze(), im_.squeeze())
 
             #out_im = Image.fromarray(np.ones((100,100), dtype=np.uint8) * idx * 2)
             #out_im.save(os.path.join(TMP_FOLDER, wat_path))
 
 
             prefix, time_stamp, obstarget, scan_num, coarse_chan, subidx = _parse_meta(meta[idx])
+
+            f0 = 2802.83203125 #Sband
+            foff =-2.7939677238464355e-6
+            centerfreq = f0 + foff*(coarse_chan*1024**2+subidx)
             obj = {
                 'prefix': prefix,
                 'target': obstarget,
                 'timestamp': time_stamp,
                 'scannum': scan_num,
+                "band": 'S', 
                 'coarsechnl': coarse_chan,
-                'idx': int(subidx),
-                'dist': float(sim[idx]),
+                'centerfreq': float(centerfreq), 
+                'idx': int(idx),
+                'dist': float(1.-sim[idx]),
                 'wat_path': '/image/' + wat_path
             }
             
