@@ -40,15 +40,16 @@ def _plot_image(target_path, img):
     plt.savefig(target_path)
     return 
 
-def _retrieve_image(meta, data_dir="/database1/"):
+def _retrieve_image(meta, data_dir="/database1/Sband_part1/"):
     basename = meta[0].split('.')[0]
     idx = meta[1]
     fields = basename.split('_')
     prefix = '_'.join(fields[:3])
     time_stamp = '_'.join(fields[3:5])
     obstarget = fields[5]
-    coarse_chan = fields[6]
-    path = data_dir+'/'.join([prefix, obstarget, time_stamp, coarse_chan, idx])+'.npy'
+    scan_num = fields[6]
+    coarse_chan = fields[9]
+    path = data_dir+'/'.join([prefix, obstarget, time_stamp, scan_num, coarse_chan, idx])+'.npy'
     try:
         img_ = np.load(path).squeeze()
     except:
