@@ -43,7 +43,7 @@ def _plot_image(target_path, img):
     plt.savefig(target_path)
     return 
 
-def _retrieve_image(meta, data_dir="/datax/theta3_split/"):
+def _parse_meta(meta):
     basename = '_'.join(meta[0].split('.'))
     idx = meta[1]
     fields = basename.split('_')
@@ -52,6 +52,10 @@ def _retrieve_image(meta, data_dir="/datax/theta3_split/"):
     obstarget = fields[5]
     scan_num = fields[6]
     coarse_chan = fields[9]
+    return prefix, time_stamp, obstarget, scan_num, coarse_chan, idx
+
+def _retrieve_image(meta, data_dir="/datax/theta3_split/"):
+    prefix, time_stamp, obstarget, scan_num, coarse_chan, idx = _parse_meta(meta)
     path = data_dir+'/'.join([prefix, obstarget, time_stamp, scan_num, coarse_chan, idx])+'.npy'
     try:
         img_ = np.load(path).squeeze()
@@ -121,9 +125,16 @@ def query_image():
 
             #out_im = Image.fromarray(np.ones((100,100), dtype=np.uint8) * idx * 2)
             #out_im.save(os.path.join(TMP_FOLDER, wat_path))
-            
+
+
+            prefix, time_stamp, obstarget, scan_num, coarse_chan, subidx = _parse_meta(meta[idx])
             obj = {
-                'idx': int(idx),
+                'prefix': prefix,
+                'target': obstarget,
+                'timestamp': time_stamp,
+                'scannum': scan_num,
+                'coarsechnl': coarse_chan,
+                'idx': int(subidx),
                 'dist': float(sim[idx]),
                 'wat_path': '/image/' + wat_path
             }
