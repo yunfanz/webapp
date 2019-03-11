@@ -135,7 +135,7 @@ def query_image():
                 'scannum': scan_num,
                 'coarsechnl': coarse_chan,
                 'idx': int(subidx),
-                'dist': float(sim[idx]),
+                'dist': float(1.-sim[idx]),
                 'wat_path': '/image/' + wat_path
             }
             
