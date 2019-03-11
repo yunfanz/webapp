@@ -26,3 +26,9 @@ except OSError:
 
 from . import core
 app.register_blueprint(core.bp) 
+
+@app.errorhandler(400)
+def custom400(error):
+    response = jsonify({'message': error.description['message']})
+
+

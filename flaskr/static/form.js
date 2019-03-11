@@ -20,11 +20,19 @@
                cache: false,
                success: function(data)
                {
-                   $('#disp-id').text(data['idx']);
-                   $('#disp-dist').text(data['dist']);
-                   $('#disp-img').html("<img src='" + data['wat_path'] + "' alt='waterfall'/>");
-                   $('#results').show();
-               }
+		   if('idx' in data) {
+                     $('#disp-id').text(data['idx']);
+                     $('#disp-dist').text(data['dist']);
+                     $('#disp-img').html("<img src='" + data['wat_path'] + "' alt='waterfall'/>");
+                     $('#input-error').text("");
+                     $('#results').show();
+		   } else {
+                     $('#results').hide();
+                     $('#input-error').text("Error: " + data['message']);
+		   }
+               },
+               error: function(data) {
+	       }
              });
         });
     });

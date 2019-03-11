@@ -5,12 +5,14 @@ import tempfile
 from PIL import Image
 import matplotlib.pyplot as plt
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for, send_from_directory, jsonify
+    Blueprint, flash, g, redirect, render_template, request, session, url_for, send_from_directory, jsonify, abort
 )
 from werkzeug.utils import secure_filename
 
 DATA_FOLDER = 'data'
 TMP_FOLDER = 'tmp'
+SYS_TMP_FOLDER = tempfile.gettempdir()
+
 STATIC_FOLDER = os.path.join('flaskr', 'static')
 ALLOWED_EXTENSIONS = set(['npy', 'npz'])
 
@@ -24,7 +26,7 @@ bp = Blueprint('core', __name__, url_prefix='/')
 keys = np.load(KEYS_PATH)
 meta = np.load(META_PATH)
 
-def load_graph(frozen_graph_filename):
+def _load_graph(frozen_graph_filename):
    """ Function to load frozen TensorFlow graph"""
    with tf.gfile.GFile(frozen_graph_filename, "rb") as f:
        graph_def = tf.GraphDef()
@@ -34,14 +36,15 @@ def load_graph(frozen_graph_filename):
    return graph
 
 def _plot_image(target_path, img):
-    f, ax = plt.subplot(figsize=(12,8))
-    ax.imshow(img.squeeze(), aspect='auto')
+    f, ax = plt.subplots(figsize=(8,6))
+    im = ax.imshow(img.squeeze(), aspect='auto')
+    f.colorbar(im)
     plt.tight_layout()
     plt.savefig(target_path)
     return 
 
-def _retrieve_image(meta, data_dir="/database1/Sband_part1/"):
-    basename = meta[0].split('.')[0]
+def _retrieve_image(meta, data_dir="/datax/theta3_split/"):
+    basename = '_'.join(meta[0].split('.'))
     idx = meta[1]
     fields = basename.split('_')
     prefix = '_'.join(fields[:3])
@@ -57,8 +60,7 @@ def _retrieve_image(meta, data_dir="/database1/Sband_part1/"):
         img_ = None
     return img_
 
-
-graph = load_graph(MODEL_PATH)
+graph = _load_graph(MODEL_PATH)
 x = graph.get_tensor_by_name('prefix/input_:0')
 y = graph.get_tensor_by_name('prefix/enc_norm:0')
 sess = tf.Session(graph=graph)
@@ -76,19 +78,17 @@ def home():
     
 @bp.route('/image/<path:filename>', methods=('GET',))
 def serve_image(filename):
-    print(filename, file=sys.stderr)
-    return send_from_directory('../tmp/', filename)
+    return send_from_directory(SYS_TMP_FOLDER, filename)
 
 @bp.route('/query', methods=('POST',))
 def query_image():
     if request.method == 'POST':
         if 'file' not in request.files:
-            flash('Please select a file')
-            return redirect(url_for('core.home'))
+            return jsonify({'message': 'No file specified'})
         file = request.files['file']
         if file.filename == '':
-            flash('Please select a file')
-            return redirect(url_for('core.home'))
+            return jsonify({'message': 'No file specified'})
+
         if file and allowed_file(file.filename):
             # save the file
             filename = os.path.join(TMP_FOLDER, 'f' + next(tempfile._get_candidate_names()))
@@ -100,9 +100,9 @@ def query_image():
 
             # check image size
             if im.shape != (16, 128):
-                flash('Image must be 16x128')
-                return redirect(url_for('core.home'))
-            im = im.reshape((1, 16, 128, 1))
+                print("Unsupported image dimensions received")
+                return jsonify({'message': 'unsupported image dimensions. Only 16x128 images allowed.'})
+            im = im.reshape((1, 16, 128, 1)).astype(np.float32)
 
             # run tensorflow inference
             vec = sess.run(y, feed_dict={x: im})
@@ -110,14 +110,14 @@ def query_image():
             # compare with keys
             sim = keys @ vec.reshape((32,))
             idx = np.argmax(sim)
-            flash(str(idx))
             
             im_ = _retrieve_image(meta[idx])
             if im_ is None:
                 im_ = np.ones_like(im)
             wat_path = 'i' + next(tempfile._get_candidate_names()) + '.png'
-            _plot_image(wat_path, np.vstack([im.squeeze(), im_.squeeze()]))
-            
+            im_ *= (1.0/im_.max())
+
+            _plot_image(os.path.join(SYS_TMP_FOLDER, wat_path), np.vstack([im.squeeze(), im_.squeeze()]))
 
             #out_im = Image.fromarray(np.ones((100,100), dtype=np.uint8) * idx * 2)
             #out_im.save(os.path.join(TMP_FOLDER, wat_path))
@@ -129,5 +129,4 @@ def query_image():
             }
             
             os.remove(filename)
-            
             return jsonify(obj)

@@ -10,6 +10,11 @@ section {
   padding: 30px 0;
 }
 
+#input-error-group {
+  padding: 10px 0;
+  color: #cc2222
+}
+
 #results {
   display: none
 }

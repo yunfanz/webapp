@@ -5,13 +5,17 @@
 {% endblock %}
 
 {% block content %}
-    <form id="image-query-form" action="{{ url_for('core.query_image') }}" method="post" enctype="multipart/form-data">
+    <form id="image-query-form" action="{{ url_for('core.query_image') }}" method="post" enctype="multipart/form-data"> 
         <div class="form-group">
             <label for="file">16x128 image file (.npy):</label>
             <input type="file" class="form-control-file" id="file">
         </div>
         
         <button class="btn btn-primary" type="submit">Query for Nearest Data Point</button>
+
+        <div class="form-group" id="input-error-group">
+            <span id="input-error">
+	</div>
     </form>
     <table class="table" id="results">
         <tr><td>ID</td>
