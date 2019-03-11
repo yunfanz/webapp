@@ -21,8 +21,13 @@
                success: function(data)
                {
 		   if('idx' in data) {
-                     $('#disp-id').text(data['idx']);
                      $('#disp-dist').text(data['dist']);
+                     $('#disp-timestamp').text(data['timestamp']);
+                     $('#disp-target').text(data['target']);
+                     $('#disp-scannum').text(data['scannum']);
+                     $('#disp-coarsechnl').text(data['coarsechnl']);
+                     $('#disp-prefix').text(data['prefix']);
+                     $('#disp-id').text(data['idx']);
                      $('#disp-img').html("<img src='" + data['wat_path'] + "' alt='waterfall'/>");
                      $('#input-error').text("");
                      $('#results').show();
