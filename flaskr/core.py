@@ -134,13 +134,13 @@ def query_image():
 
             f0 = 2802.83203125 #Sband
             foff =-2.7939677238464355e-6
-            centerfreq = f0 + foff*(coarse_chan*1024**2+subidx)
+            centerfreq = f0 + foff*(float(coarse_chan)*1024**2+float(subidx))
             obj = {
                 'prefix': prefix,
                 'target': obstarget,
                 'timestamp': time_stamp,
                 'scannum': scan_num,
-                "band": 'S', 
+                "band": "S", 
                 'coarsechnl': coarse_chan,
                 'centerfreq': float(centerfreq), 
                 'idx': int(idx),
