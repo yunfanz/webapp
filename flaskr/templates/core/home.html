@@ -6,9 +6,9 @@
 
 {% block content %}
     <form id="image-query-form" action="{{ url_for('core.query_image') }}" method="post" enctype="multipart/form-data"> 
-        <p>Have an interesting radio signal? Our deep learning engine searches the Breakthrough Listen Database for similar signal to yours.</p>
-        <p>Please upload a 16 times stamp by 128 frequency file in npy format. </p>
-
+        <p>Have an interesting radio signal? Our deep learning engine searches the Breakthrough Listen Database for a signal similar to yours.</p>
+        <p>Please upload a 16 timestamp by 128 frequency channel file in npy format.
+           You may want to try <a href="/public/340.npy">this sample file</a>.</p>
 
         <div class="form-group">
             <label for="file">16x128 image file (.npy):</label>
@@ -22,20 +22,22 @@
 	</div>
     </form>
 
-    <p>We found the following match: </p>
-    <table class="table" id="results">
-        <tr><td>ID</td><td><span id="disp-id"></span></td> </tr>
-        <tr><td>Distance</td><td><span id="disp-dist"></span></td> </tr>
-        <tr><td>Timestamp</td><td><span id="disp-timestamp"></span></td> </tr>
-        <tr><td>Target</td><td><span id="disp-target"></span></td> </tr>
-        <tr><td>Scan Number</td><td><span id="disp-scannum"></span></td> </tr>
-        <tr><td>Band</td><td><span id="disp-band"></span></td> </tr>
-        <tr><td>Coarse Channel</td><td><span id="disp-coarsechnl"></span></td> </tr>
-        <tr><td>Center Freq</td><td><span id="disp-centerfreq"></span></td> </tr>
-        <tr><td>Prefix</td><td><span id="disp-prefix"></span></td> </tr>
-        <tr><td>Image</td><td><span id="disp-img"></span></td></tr>
-        </tbody>
-    </table>
+    <div id="results">
+        <p>We found the following match: </p>
+        <table class="table">
+            <tr><td>ID</td><td><span id="disp-id"></span></td> </tr>
+            <tr><td>Distance</td><td><span id="disp-dist"></span></td> </tr>
+            <tr><td>Timestamp</td><td><span id="disp-timestamp"></span></td> </tr>
+            <tr><td>Target</td><td><span id="disp-target"></span></td> </tr>
+            <tr><td>Scan Number</td><td><span id="disp-scannum"></span></td> </tr>
+            <tr><td>Band</td><td><span id="disp-band"></span></td> </tr>
+            <tr><td>Coarse Channel</td><td><span id="disp-coarsechnl"></span></td> </tr>
+            <tr><td>Center Freq</td><td><span id="disp-centerfreq"></span></td> </tr>
+            <tr><td>Prefix</td><td><span id="disp-prefix"></span></td> </tr>
+            <tr><td>Image</td><td><span id="disp-img"></span></td></tr>
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
 
 {% block footer %}
