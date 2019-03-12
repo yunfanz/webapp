@@ -10,14 +10,15 @@ from flask import (
 from werkzeug.utils import secure_filename
 
 DATA_FOLDER = 'data'
+QUERY_FOLDER = '/datax/query'
 TMP_FOLDER = 'tmp'
 SYS_TMP_FOLDER = tempfile.gettempdir()
 
 STATIC_FOLDER = os.path.join('flaskr', 'static')
 ALLOWED_EXTENSIONS = set(['npy', 'npz'])
 
-KEYS_PATH = os.path.join(DATA_FOLDER, 'keys.npy')
-META_PATH = os.path.join(DATA_FOLDER, 'meta.npy')
+KEYS_PATH = os.path.join(QUERY_FOLDER, 'keys.npy')
+META_PATH = os.path.join(QUERY_FOLDER, 'meta.npy')
 MODEL_PATH = os.path.join(DATA_FOLDER, 'frozen_model.pb')
 
 bp = Blueprint('core', __name__, url_prefix='/')
