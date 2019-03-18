@@ -7,14 +7,29 @@ section {
 }
 
 #image-query-form {
-  padding: 30px 0;
+  padding: 30px 0 0 0;
 }
 
 #input-error-group {
-  padding: 10px 0;
-  color: #cc2222
+  padding: 10px 0 5px 0;
 }
 
 #results {
   display: none
+}
+
+#results h4 {
+  margin-top: 30px;
+}
+
+#single-result {
+  display: none
+}
+
+#results-list .result-entry {
+  padding: 12px 20px;
+}
+
+.result-entry-active {
+  background-color: #ddd;
 }
