@@ -7,7 +7,8 @@
 {% block content %}
     <form id="image-query-form" action="{{ url_for('core.query_image') }}" method="post" enctype="multipart/form-data"> 
         <p>Have an interesting radio signal? Our deep learning engine searches the Breakthrough Listen Database for a signal similar to yours.</p>
-        <p>Please upload a 16 timestamp by 128 frequency channel file in npy format.  You may want to try <a href="/public/340.npy">this sample file</a>.</p> <div class="form-group">
+	<p>Please upload a 16 timestamp by 128 frequency channel file in npy format.  </p>
+	<p>Checkout <a href="/public/340.npy">this sample file</a> or <a href="/public/340_n.npy">with added noise</a>, and a <a href="/public/circle1.npy">a simulated signal</a>.</p> <div class="form-group">
             <label for="file">16x128 image file (.npy):</label>
             <input type="file" class="form-control-file" id="file">
         </div>
